@@ -1,0 +1,151 @@
+01/17/2020
+For this week, we decided on the dataset for this project, which is the Speed Dating Experiment dataset on Kaggle 
+(https://www.kaggle.com/annavictoria/speed-dating-experiment). The dataset consists of experiment data gathered by 
+Columbia Business School. In the experiment, participants met with other opposite-sex participants for several 
+four-minute periods and then decided whether they would like to see their date again. The rating on attractiveness, 
+sincerity, intelligence, fun, ambition and shared interests were recorded after each date. The dataset also includes 
+demographic data about each participant. The study is beneficial to the growing dating app industry. We can get a 
+better understanding of identifying the influential factors of dating, and potentially help dating apps grow their
+matching rate (Yes, love at the first sight is quantifiable).  
+
+We discussed about the overall project schedule as below:
+Week 3-4 - EDA (Biweekly report 1/31)
+Week 5-6 - Feature Engineering  (Biweekly report 2/14)
+Week 7-8 - Model Fitting & Validation (Biweekly report 2/28)
+Week 9-10 - Report Drafting (Final submission 3/13)
+
+We also thought about the sections of our final report and drafted the introduction.
+Introduction to dataset/objective
+In today’s busy world, more and more people are turning into speed dating as their ways of looking for a romantic 
+partner. For this project, our objective is to use machine learning models to explore xxx… /answer the question xxxx
+
+The primary dataset (https://www.kaggle.com/annavictoria/speed-dating-experiment)  for this project was gathered 
+from participants in experimental speed dating events from 2002-2004. During the events, the attendees would have 
+a four minute "first date" with every other participant of the opposite sex. At the end of their four minutes, 
+participants were asked if they would like to see their date again. They were also asked to rate their date on six 
+attributes: Attractiveness, Sincerity, Intelligence, Fun, Ambition, and Shared Interests.
+
+The dataset also includes questionnaire data gathered from participants at different points in the process. These 
+fields include: demographics, dating habits, self-perception across key attributes, beliefs on what others find 
+valuable in a mate, and lifestyle information.
+
+
+
+01/31/2020
+Summary:
+This week, we determined the goal for our project, which is to predict whether potential partners will be a good 
+match based on their demographic data, personality score, and the feedback for the date. After setting the responsible 
+variable we want to predict, we worked on some data exploratory data analysis to better understand the data and 
+conducted some data wrangling job.
+
+Understanding the data:
+The data consists of 195 variables including the background information on the participants and their matching 
+activity information and responses on several surveys when the sign up for the experiments, throughout and after 
+the experiment. The first survey was taken when the students signed up for the survey, participants were asked to 
+fill out a scoreboard after each date, the first follow-up survey was taken the day after the event and the second 
+follow-up was taken 3-4 weeks after the event.
+
+Data Cleaning:
+To extract the most relevant and informative variables, we dropped the variables with missing value rate higher 
+than 0.5. We also excluded the variables corresponding to the half way through survey and third survey. The half way 
+through survey is given to participants after they were half through meeting half of all potential dates. The third 
+survey is the second follow-up during the experiment, this follow-up survey was taken 3-4 weeks after the experiments. 
+For we care more about the timely response of the participants after the speed-dating, which were included in the 
+variables corresponding to the first follow-up, we decided to exclude the variables corresponding to these two surveys.
+
+In several analyses, the participants were given different instructions. For example, in most of the events, participants 
+were given 100 points to distribute to the 6 attributes to show their priority. Some groups, however, were asked to rank 
+the importance of the attributes on a 1-10 scale. Additionally, some participants’ scores do not add up to 100. In 
+both cases, the data has been scaled to form a 0-100 distribution like all other participants.
+
+Exploratory Analysis: 
+After obtaining a fairly clean and complete dataset, we conducted several exploratory analysis on the distribution of 
+important variables and what features people are looking for in their matches and if there is a distinction between male 
+and female participants. After analyzing the data, we had some interesting findings:
+
+According to the survey taken before the experiment, the male participants are giving a lot of weight on attractiveness 
+while a lot less weight on the ambition attributes on their match. On the other hand, females give each attribute 
+almost even weight. 
+
+Next steps:
+Research more about the dataset, such as checking the distribution of features
+Conduct further data engineering works like imputation, selection, etc.
+Determine the models we are going to implement
+
+
+
+02/14/2020
+This week, we finished the exploratory analysis on how much people care about each attribute when choosing their date, 
+we conducted feature engineering and fit the first iteration of the model. 
+
+We implemented the classification tree model on the clean dataset and checked the importance of different traits of the 
+potential partners. After the first version of the tree, we found some predictors are of high importance but not meaningful 
+to our analysis, such as 'dec_o', dec', ‘like_o’, and ‘like.’ These predictors represent the attitude of one participant 
+towards his/her dating subject - whether they like the other participant or not. It is intuitive that two people with 
+good feelings for each other will end up as a good match. Thus, we’ll exclude those post-dating feedback data from our 
+following modeling, because our goal is to predict potential good matches and find out the important factors leading to 
+the matches. 
+
+After dropping the irrelevant columns, we refit the tree model and identify 11 most important factors: zip code, career,
+fun, attr, fun_o, prob_o, from, shar, attr_o, prob, shar_o (from most important to least). We saw that the location, 
+vocation and personality are important to predict whether two people would be a good match, which is in line with our 
+common sense. In the later-on analysis (such as neural network), we will focus more on these important factors. 
+
+Our next step is to fit other classification models (neural network, random forest, etc.) to the data and find out the 
+model with the best classification accuracy. For each model, we’ll use cross validation to search for the best parameters 
+and then compare the classification results of different models. After we get the best model, we’ll look into the 
+important predictors and figure out the dynamics between the influential attributes and the matching result.
+
+
+
+02/28/2020
+This week, we fitted a neural network model and support vector machine model based on the important features given by 
+the tree model we fitted in the past weeks. We also finished data imputation to the important features.
+
+For the neural network, we first normalized 8 numerical predictors of the 11 important ones. At the beginning we came into 
+an error (actually warning) when fitting the model, indicating that the neural network model would be extremely 
+time-consuming, even if we set size to 1. We had no choice but to set MaxNWts a very large number to force the 
+implementation of the model. The reason why this happened was very likely that there were multiple levels of the 
+categorical predictors, which resulted in too many dummies variables and made it harder to fit. We arbitrarily set 
+size = 3 and got the misclassification rate = 0.08044879, which was lower compared to 0.1105276 from the tree model. 
+The prediction power seemed good and deserved more exploration considering we have not done cross validation. The time 
+used to fit a very simple neural network model (size=3) without CV was around 5 minutes while it took only a few seconds 
+to run a tree with 10-fold CV. It was too time-consuming, so we decided to implement CV for the neural network next week 
+on the MSiA server. 
+
+After the first draft of the neural network model, we checked if the variable importance indicated by the neural network 
+aligned with that given by tree. However, the ALE package could not deal with predictors with NA. Then we checked the NA 
+distribution of the selected (important) predictors and found that all the variables have the percentage of NA values under 
+5%, except for shar and shar_o, which have around 12% NA’s. Thus, we used the mean values to replace the NA’s and refit 
+the model.
+
+According to the ALE plot, we can tell that the most important numerical factors are attr and prob, followed by attr_o 
+and fun. The 3 categorical variables - from, zipcode, career - are all very important, which was generally in line with 
+the tree model. However, 'from' and 'zipcode' may be highly correlated, because the information contained in ‘from’ is 
+a subset of the information contained in ‘zipcode.’ Since the results from both neural network and tree indicated that 
+zipcode is more important than from, we decided to drop 'from' in the later-on analysis.
+
+After the neural network, we also fit a support vector machine model, which was not covered in the lecture. The 
+misclassification was 0.1172117 (higher compared to 0.08044879 of neural network and 0.1105276 of the tree).
+
+Next step:
+1. Run cross validation on remote terminal and find the best model for neural network and support vector machine
+2. Implement gradient boosting tree / random forest 
+3. Write final report
+  - Data cleaning
+  - EDA
+  - Feature interpretation and selection
+  - Model Fitting
+    + Nearest neighbors (TBD, could be included if time allows. No need to implement NN, which is not a good choice 
+    in simple classification problem, bad time complexity)
+    + Classification Tree
+    + Random Forest
+    + At  least  one  new  method  that  we  did  not  explicitly  cover  in  class (Xgboost, GBDT, SVM)
+  - Model Validation
+  - Conclusion
+
+
+
+
+
+
